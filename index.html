@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testimonials Admin Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .auth-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .user-photo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 3px solid #667eea;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn, .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        
+        .filter-btn.active, .filter-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5a67d8;
+        }
+        
+        .btn-danger {
+            background: #e53e3e;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c53030;
+        }
+        
+        .testimonials-grid {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .testimonial-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            border-left: 5px solid #ddd;
+        }
+        
+        .testimonial-card.pending {
+            border-left-color: #f6ad55;
+        }
+        
+        .testimonial-card.approved {
+            border-left-color: #48bb78;
+        }
+        
+        .testimonial-card.rejected {
+            border-left-color: #f56565;
+        }
+        
+        .testimonial-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .user-section {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .profile-photo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #667eea;
+        }
+        
+        .user-name {
+            font-weight: bold;
+            color: #2d3748;
+            font-size: 1.1em;
+        }
+        
+        .user-role {
+            color: #718096;
+            font-size: 0.9em;
+        }
+        
+        .user-email {
+            color: #4a5568;
+            font-size: 0.85em;
+        }
+        
+        .rating {
+            color: #f6ad55;
+            font-size: 1.2em;
+            margin-top: 5px;
+        }
+        
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .status-pending {
+            background: #fed7aa;
+            color: #c2410c;
+        }
+        
+        .status-approved {
+            background: #bbf7d0;
+            color: #166534;
+        }
+        
+        .status-rejected {
+            background: #fecaca;
+            color: #991b1b;
+        }
+        
+        .testimonial-text {
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-style: italic;
+            font-size: 1.05em;
+        }
+        
+        .testimonial-date {
+            color: #a0aec0;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-approve {
+            background: #48bb78;
+            color: white;
+        }
+        
+        .btn-approve:hover {
+            background: #38a169;
+        }
+        
+        .btn-reject {
+            background: #f56565;
+            color: white;
+        }
+        
+        .btn-reject:hover {
+            background: #e53e3e;
+        }
+        
+        .btn-delete {
+            background: #cbd5e0;
+            color: #4a5568;
+        }
+        
+        .btn-delete:hover {
+            background: #a0aec0;
+        }
+        
+        .loading-state, .empty-state {
+            text-align: center;
+            padding: 50px;
+            color: #718096;
+        }
+        
+        .loading-state {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .empty-state {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        @media (max-width: 768px) {
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .testimonial-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .action-buttons {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎙️ Testimonials Admin Panel</h1>
+            <p>Manage and moderate user testimonials</p>
+        </div>
+
+        <!-- Authentication Section -->
+        <div id="authSection" class="auth-section">
+            <div id="loginSection">
+                <h3>Admin Access Required</h3>
+                <p>Please sign in with your admin account to access the testimonials panel.</p>
+                <button id="loginBtn" class="btn btn-primary">Sign In with Google</button>
+            </div>
+            
+            <div id="userSection" class="hidden">
+                <div class="user-info">
+                    <img id="userPhoto" class="user-photo" src="" alt="User">
+                    <div>
+                        <div id="userName"></div>
+                        <div id="userEmail"></div>
+                    </div>
+                </div>
+                <button id="logoutBtn" class="btn btn-danger">Sign Out</button>
+            </div>
+        </div>
+
+        <!-- Main Content (Hidden until authenticated) -->
+        <div id="mainContent" class="hidden">
+            <!-- Statistics -->
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalCount">0</div>
+                    <div>Total Testimonials</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="pendingCount">0</div>
+                    <div>Pending Review</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="approvedCount">0</div>
+                    <div>Approved</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="rejectedCount">0</div>
+                    <div>Rejected</div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters">
+                <button class="filter-btn active" onclick="filterTestimonials('all')">All</button>
+                <button class="filter-btn" onclick="filterTestimonials('pending')">Pending</button>
+                <button class="filter-btn" onclick="filterTestimonials('approved')">Approved</button>
+                <button class="filter-btn" onclick="filterTestimonials('rejected')">Rejected</button>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="loading-state">
+                <h3>Loading testimonials...</h3>
+                <p>Please wait while we fetch the data.</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="empty-state hidden">
+                <h3>No testimonials found</h3>
+                <p>No testimonials match the current filter.</p>
+            </div>
+
+            <!-- Testimonials Container -->
+            <div id="testimonialsContainer" class="testimonials-grid"></div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { 
+            getFirestore, 
+            collection, 
+            query, 
+            orderBy, 
+            getDocs, 
+            doc, 
+            updateDoc, 
+            deleteDoc, 
+            serverTimestamp 
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { 
+            getAuth, 
+            signInWithPopup, 
+            GoogleAuthProvider, 
+            signOut, 
+            onAuthStateChanged 
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+        // Replace with your Firebase config
+       const firebaseConfig = {
+        apiKey: "AIzaSyCfriafDX4-mB9iV944ISh69BVvkHfYYbA",
+        authDomain: "moussa-simbi-podcast.firebaseapp.com",
+        projectId: "moussa-simbi-podcast",
+        storageBucket: "moussa-simbi-podcast.firebasestorage.app",
+        messagingSenderId: "549478129990",
+        appId: "1:549478129990:web:74de043d1c94778addc547",
+        measurementId: "G-YV6NBHWHFM"
+        };
+
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        let allTestimonials = [];
+        let currentFilter = 'all';
+        let currentUser = null;
+
+        // Admin emails (replace with your actual admin emails)
+        const ADMIN_EMAILS = [
+            'vicekid46@gmail.com',
+            'ifeoluwatoyinfaith@gmail.com'
+        ];
+
+        // Authentication state observer
+        onAuthStateChanged(auth, (user) => {
+            if (user && ADMIN_EMAILS.includes(user.email)) {
+                currentUser = user;
+                showUserSection(user);
+                showMainContent();
+                loadTestimonials();
+            } else {
+                currentUser = null;
+                showLoginSection();
+                hideMainContent();
+                if (user) {
+                    // User is signed in but not an admin
+                    alert('Access denied. You must be an admin to access this panel.');
+                    signOut(auth);
+                }
+            }
+        });
+
+        // Sign in function
+        document.getElementById('loginBtn').addEventListener('click', async () => {
+            try {
+                const result = await signInWithPopup(auth, provider);
+                // User will be handled by onAuthStateChanged
+            } catch (error) {
+                console.error('Sign in error:', error);
+                alert('Sign in failed: ' + error.message);
+            }
+        });
+
+        // Sign out function
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                // User will be handled by onAuthStateChanged
+            } catch (error) {
+                console.error('Sign out error:', error);
+            }
+        });
+
+        function showUserSection(user) {
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('userSection').classList.remove('hidden');
+            document.getElementById('userPhoto').src = user.photoURL || '';
+            document.getElementById('userName').textContent = user.displayName || 'Admin';
+            document.getElementById('userEmail').textContent = user.email;
+        }
+
+        function showLoginSection() {
+            document.getElementById('loginSection').classList.remove('hidden');
+            document.getElementById('userSection').classList.add('hidden');
+        }
+
+        function showMainContent() {
+            document.getElementById('mainContent').classList.remove('hidden');
+        }
+
+        function hideMainContent() {
+            document.getElementById('mainContent').classList.add('hidden');
+        }
+
+        // Load all testimonials (now requires authentication)
+        async function loadTestimonials() {
+            if (!currentUser) return;
+            
+            try {
+                const q = query(collection(db, 'testimonials'), orderBy('createdAt', 'desc'));
+                const querySnapshot = await getDocs(q);
+                
+                allTestimonials = [];
+                querySnapshot.forEach((doc) => {
+                    allTestimonials.push({
+                        id: doc.id,
+                        ...doc.data(),
+                        createdAt: doc.data().createdAt?.toDate() || new Date()
+                    });
+                });
+
+                updateStats();
+                displayTestimonials(currentFilter);
+                
+            } catch (error) {
+                console.error('Error loading testimonials:', error);
+                document.getElementById('loadingState').innerHTML = '<h3>Error loading testimonials</h3><p>' + error.message + '</p>';
+            }
+        }
+
+        // Update statistics
+        function updateStats() {
+            const stats = {
+                total: allTestimonials.length,
+                pending: allTestimonials.filter(t => t.status === 'pending').length,
+                approved: allTestimonials.filter(t => t.status === 'approved').length,
+                rejected: allTestimonials.filter(t => t.status === 'rejected').length
+            };
+
+            document.getElementById('totalCount').textContent = stats.total;
+            document.getElementById('pendingCount').textContent = stats.pending;
+            document.getElementById('approvedCount').textContent = stats.approved;
+            document.getElementById('rejectedCount').textContent = stats.rejected;
+        }
+
+        // Display testimonials based on filter
+        function displayTestimonials(filter) {
+            const container = document.getElementById('testimonialsContainer');
+            const loadingState = document.getElementById('loadingState');
+            const emptyState = document.getElementById('emptyState');
+            
+            loadingState.style.display = 'none';
+            
+            let filtered = allTestimonials;
+            if (filter !== 'all') {
+                filtered = allTestimonials.filter(t => t.status === filter);
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            
+            container.innerHTML = filtered.map(testimonial => `
+                <div class="testimonial-card ${testimonial.status}" data-id="${testimonial.id}">
+                    <div class="testimonial-header">
+                        <div class="user-info">
+                            ${testimonial.profilePhoto ? 
+                                `<div class="user-section">
+                                    <img src="${testimonial.profilePhoto}" alt="Profile" class="profile-photo">
+                                    <div>
+                                        <div class="user-name">${testimonial.fullName}</div>
+                                        <div class="user-role">${testimonial.role || 'Listener'}</div>
+                                        ${testimonial.email ? `<div class="user-email">${testimonial.email}</div>` : ''}
+                                    </div>
+                                </div>` :
+                                `<div class="user-name">${testimonial.fullName}</div>
+                                <div class="user-role">${testimonial.role || 'Listener'}</div>
+                                ${testimonial.email ? `<div class="user-email">${testimonial.email}</div>` : ''}`
+                            }
+                            <div class="rating">${'★'.repeat(testimonial.rating || 5)}</div>
+                        </div>
+                        <span class="status-badge status-${testimonial.status}">${testimonial.status}</span>
+                    </div>
+                    
+                    <div class="testimonial-text">"${testimonial.testimonial}"</div>
+                    
+                    <div class="testimonial-date">
+                        Submitted: ${testimonial.createdAt.toLocaleDateString()} ${testimonial.createdAt.toLocaleTimeString()}
+                    </div>
+                    
+                    <div class="action-buttons">
+                        ${testimonial.status === 'pending' ? `
+                            <button class="btn btn-approve" onclick="approveTestimonial('${testimonial.id}')">
+                                ✅ Approve
+                            </button>
+                            <button class="btn btn-reject" onclick="rejectTestimonial('${testimonial.id}')">
+                                ❌ Reject
+                            </button>
+                        ` : ''}
+                        <button class="btn btn-delete" onclick="deleteTestimonial('${testimonial.id}')">
+                            🗑️ Delete
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Approve testimonial
+        window.approveTestimonial = async function(id) {
+            if (!currentUser) return;
+            if (!confirm('Approve this testimonial?')) return;
+            
+            try {
+                const testimonialRef = doc(db, 'testimonials', id);
+                await updateDoc(testimonialRef, {
+                    status: 'approved',
+                    approvedAt: serverTimestamp()
+                });
+                
+                // Update local data
+                const testimonial = allTestimonials.find(t => t.id === id);
+                if (testimonial) testimonial.status = 'approved';
+                
+                updateStats();
+                displayTestimonials(currentFilter);
+                
+                alert('Testimonial approved successfully!');
+            } catch (error) {
+                console.error('Error approving testimonial:', error);
+                alert('Error approving testimonial: ' + error.message);
+            }
+        };
+
+        // Reject testimonial
+        window.rejectTestimonial = async function(id) {
+            if (!currentUser) return;
+            const reason = prompt('Reason for rejection (optional):');
+            if (reason === null) return; // User cancelled
+            
+            try {
+                const testimonialRef = doc(db, 'testimonials', id);
+                await updateDoc(testimonialRef, {
+                    status: 'rejected',
+                    rejectionReason: reason || '',
+                    rejectedAt: serverTimestamp()
+                });
+                
+                // Update local data
+                const testimonial = allTestimonials.find(t => t.id === id);
+                if (testimonial) testimonial.status = 'rejected';
+                
+                updateStats();
+                displayTestimonials(currentFilter);
+                
+                alert('Testimonial rejected successfully!');
+            } catch (error) {
+                console.error('Error rejecting testimonial:', error);
+                alert('Error rejecting testimonial: ' + error.message);
+            }
+        };
+
+        // Delete testimonial
+        window.deleteTestimonial = async function(id) {
+            if (!currentUser) return;
+            if (!confirm('Are you sure you want to delete this testimonial? This action cannot be undone.')) return;
+            
+            try {
+                await deleteDoc(doc(db, 'testimonials', id));
+                
+                // Remove from local data
+                allTestimonials = allTestimonials.filter(t => t.id !== id);
+                
+                updateStats();
+                displayTestimonials(currentFilter);
+                
+                alert('Testimonial deleted successfully!');
+            } catch (error) {
+                console.error('Error deleting testimonial:', error);
+                alert('Error deleting testimonial: ' + error.message);
+            }
+        };
+
+        // Filter testimonials
+        window.filterTestimonials = function(filter) {
+            currentFilter = filter;
+            
+            // Update filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            displayTestimonials(filter);
+        };
+    </script>
+</body>
+</html>
